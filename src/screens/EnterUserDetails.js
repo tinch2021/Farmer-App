@@ -31,16 +31,16 @@ function App() {
 
   // console.log("current address : " ,  currentAddress )
 
-  console.log("flag : " ,  ContextValue.GotUserDetailsFlag )
+  // console.log("flag : " ,  ContextValue.GotUserDetailsFlag )
 
-  console.log("flag : " ,  ContextValue.userValues.user_address[0] )
+  // console.log("flag : " ,  ContextValue.userValues.user_address[0] )
   
     return(
           <div>
             <AppContext>
               {
               value=>(
-                    <FoarmHandler value={value.userValues} history={history} ContextValue={ContextValue}   />
+                    <FoarmHandler userDetails={value.userValues} history={history} ContextValue={ContextValue}   />
                 )
               }
             </AppContext>

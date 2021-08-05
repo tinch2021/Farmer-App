@@ -236,6 +236,7 @@ function FoarmHandler( {setConfirmEditSwitcher}) {
           <button onClick={()=>{
                                   console.log(" final :  " , inputFiled )
                                   setConfirmEditSwitcher(true)
+                                  
                                 }}>Apply</button>
 
         </header>

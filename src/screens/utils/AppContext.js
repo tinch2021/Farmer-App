@@ -175,11 +175,6 @@ export const AppContextProvider = ( {children} )=>{
             // set the GotUserDetailsFlag to false 
             SetGotUserDetailsFlag(false)
         })
-
-
-        
-        
-        
     }
 
     // used to store user address and other values 
@@ -194,6 +189,73 @@ export const AppContextProvider = ( {children} )=>{
       ])
 
     // ------------- product section -------------
+
+
+
+
+    // -------------- send product to db -----------
+    const sendProduct = async ( ) =>{
+        // called when user add or edit his address
+
+        const timestamp = Date.now(); 
+
+        console.log(timestamp);
+        let phoneNo = isAuthenticated().phoneNumber;
+        // read the phone number 
+
+        let phoneNumber;
+        try{
+            // removes +91 from phone number
+            phoneNumber = (phoneNo).substring(3);
+            console.log("phone num rem init user :" , phoneNumber);
+        }
+        catch{
+
+        }
+
+        
+        // then we send the url encoded data to the backend 
+        // the query is called usig axios 
+        // axios({
+        //     'method'    :   'POST',
+        //     'url'       :   `${Base_URL}/phpFiles/farmerBackend/userAddOrEditAccount.php`,
+        //     'headers'   :   {
+        //                         'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+        //                     },
+        //     'data'      :  qs.stringify({
+        //                     'userPhone': phoneNumber,
+        //                     'userName' : address.name,
+        //                     'houseName' : address.house_name ,
+        //                     'userAddress' : address.address ,
+        //                     'userTownOrCity' : address.town_or_city ,
+        //                     'userPostalcodeOrZip' :pin_or_zip  ,
+        //                     'userLandmark' : address.landmark ,
+        //                     }),
+        // })
+        // .then(res =>{
+        //     // after query this function is executed 
+        //     // The response will be 202 if the query is a success
+        //     if(res.status === 202)
+        //     {
+                
+        //         // setUserValues({
+        //         //                 ...userValues,
+        //         //                 user_address: [address],
+        //         //             })
+
+        //         // set the GotUserDetailsFlag to true
+                   
+        //     }
+        // }).catch(err=>{
+        //     // enters here if query catches any error
+            
+            
+        // })        
+        
+    }
+
+    // -------------- send product to db -----------
+
 
 
 
