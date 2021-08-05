@@ -192,16 +192,52 @@ export const AppContextProvider = ( {children} )=>{
 
 
 
+    // random id maker start
+    function UniqueIdMaker() 
+    {
+
+        // --- unique timestamp ---
+        const timestamp = Date.now().toString();
+        var timestamp_stripped = timestamp.substring(5);
+        // strip last 5 numbers from timestamp
+
+
+        // --- unique phoneNo ---
+        let phoneNo = isAuthenticated().phoneNumber;
+        var phoneNo_stripped = phoneNo.substring(5);
+        // strip last 5 numbers from phoneNo
+
+        
+
+        // --- unique random generator ---
+        var chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        var result = '';
+        var length = 5;
+        for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+        // result have random generated 5 digit string 
+
+
+
+        return result+timestamp_stripped+phoneNo_stripped; //all these are added together and returned a 15 digit unique id 
+        
+    }
+    // random id maker end
+
+
+
 
     // -------------- send product to db -----------
-    const sendProduct = async ( ) =>{
+    const SendProduct = () =>{
         // called when user add or edit his address
 
-        const timestamp = Date.now(); 
+        // console.log( "randm : " , UniqueIdMaker() );
 
-        console.log(timestamp);
+        var uniqueId = UniqueIdMaker(); //each and every push have differnt id
         let phoneNo = isAuthenticated().phoneNumber;
-        // read the phone number 
+
+        var today = new Date(),
+        date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+        
 
         let phoneNumber;
         try{
@@ -213,44 +249,46 @@ export const AppContextProvider = ( {children} )=>{
 
         }
 
-        
+        const params = JSON.stringify({      
+                    "orderId":uniqueId,
+                    "userPhone":phoneNumber,
+                    
+                    "orderDate":date,
+                    "orderPlace": userValues.user_address[0].town_or_city,
+                    "Products":ProductHolder
+                    
+            });
+
+          
         // then we send the url encoded data to the backend 
         // the query is called usig axios 
-        // axios({
-        //     'method'    :   'POST',
-        //     'url'       :   `${Base_URL}/phpFiles/farmerBackend/userAddOrEditAccount.php`,
-        //     'headers'   :   {
-        //                         'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-        //                     },
-        //     'data'      :  qs.stringify({
-        //                     'userPhone': phoneNumber,
-        //                     'userName' : address.name,
-        //                     'houseName' : address.house_name ,
-        //                     'userAddress' : address.address ,
-        //                     'userTownOrCity' : address.town_or_city ,
-        //                     'userPostalcodeOrZip' :pin_or_zip  ,
-        //                     'userLandmark' : address.landmark ,
-        //                     }),
-        // })
-        // .then(res =>{
-        //     // after query this function is executed 
-        //     // The response will be 202 if the query is a success
-        //     if(res.status === 202)
-        //     {
-                
-        //         // setUserValues({
-        //         //                 ...userValues,
-        //         //                 user_address: [address],
-        //         //             })
+        // console.log("here : " , userValues.user_address[0])
+        axios({
+            'url' : `${Base_URL}/phpFiles/farmerBackend/addProductToDb.php` , 
+            'method': 'POST',
+            'headers': {'content-type': 'application/x-www-form-urlencoded;charset=utf-8'},
+            'data': params
+            
+        })            
+        .then(res =>{
+            // after query this function is executed 
+            // The response will be 202 if the query is a success
+            if(res.status === 202)
+            {
+                console.log("res : " , res.data)
+                // setUserValues({
+                //                 ...userValues,
+                //                 user_address: [address],
+                //             })
 
-        //         // set the GotUserDetailsFlag to true
+                // set the GotUserDetailsFlag to true
                    
-        //     }
-        // }).catch(err=>{
-        //     // enters here if query catches any error
+            }
+        }).catch(err=>{
+            // enters here if query catches any error
+            console.log(err)
             
-            
-        // })        
+        })        
         
     }
 
@@ -267,7 +305,7 @@ export const AppContextProvider = ( {children} )=>{
                             fetchUserDetails , 
                             
                             ProductHolder,
-                            setProductHolder,
+                            setProductHolder,SendProduct
 
                          }    
     return(
