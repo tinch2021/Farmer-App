@@ -15,8 +15,15 @@ import Select from 'react-select'
 // used for dropdown
 
 import {signOut} from './Auth/AuthenticationHandler' 
-import { flushSync } from 'react-dom';
 
+import ConfirmScreen from '../components/ConfirmAddedProducts'
+
+
+// used to display dialog box
+import Modal from 'react-modal'
+// used to display dialog box
+
+import {Link} from 'react-router-dom'
 
 function App() {
 
@@ -39,44 +46,108 @@ function App() {
   // ConfirmEditSwitcher
 
 
+
+  // --dialog box 
+  const [showDialog , setDialog] = useState(false);
+  const [WarningDialog , setWarningDialog ] = useState("");
+  // --dialog box 
+
+
   return(
     ConfirmEditSwitcher?
       <>
+      {/* enter here if apply button is pressed  */}
+      {/* display a confirm screen with product details  */}
         <ConfirmScreen setConfirmEditSwitcher={setConfirmEditSwitcher}/>
       </>
     : 
       <>
-        <FoarmHandler setConfirmEditSwitcher={setConfirmEditSwitcher}/>
+        //  form edit screen 
+        <FoarmHandler setConfirmEditSwitcher={setConfirmEditSwitcher} 
+                      setDialog = {setDialog}
+                      setWarningDialog={setWarningDialog} />
+
+        <DialogBox showDialog = {showDialog}
+                   setDialog = {setDialog}
+                   WarningDialog = {WarningDialog}
+                   setWarningDialog = {setWarningDialog}
+         />
       </>
   )
   
 }
 
-function ConfirmScreen(setConfirmEditSwitcher){
-  const ContextValue = useContext(AppContext);
-  const inputFiled =ContextValue.ProductHolder
-  
 
-  return(
-    <div>
-        <div>
-          {
-          inputFiled.map( (inputField , index)=>(
-                        <div>
-                            <div> name: {inputField.itemName} , quantity: {inputField.itemQuantity} kg </div>
-                        </div>
-                        ))
-          
+
+function DialogBox( {showDialog , setDialog, WarningDialog ,setWarningDialog} ){
+        //------- dialog window start -------
+        const customStyles = {
+          content : {
+            top                   : '50%',
+            left                  : '50%',
+            right                 : 'auto',
+            bottom                : 'auto',
+            marginRight           : '-50%',
+            transform             : 'translate(-30%, -30%)',
+        
+            
           }
-        </div>
-        <button onClick={()=>{ setConfirmEditSwitcher(false) }} >edit </button>
-    </div>
-    
-  )
+        };
+        
+        var subtitle;
+        function openModal() 
+        {
+            setDialog(true);
+        }  
+        function afterOpenModal() 
+        {
+            subtitle.style.color = '#000000';
+        }  
+        function closeModal()
+        {
+            setDialog(false);
+        }
+        //------- dialog window end -------
+
+        return(
+          <div>
+            <Modal
+              ariaHideApp={false}
+              isOpen={showDialog}
+              onAfterOpen={afterOpenModal}
+              onRequestClose={closeModal}
+              style={customStyles}
+              contentLabel="Example Modal"
+            >
+
+                    <div  className="h5 confirmorder" ref={_subtitle => (subtitle = _subtitle)}>{WarningDialog}</div>
+                                      
+                    <div>
+                            <form>                              
+                                <Link to="/" >
+                                            <div className="card">
+                                                <button 
+                                                    type=" button" className="btn btn-primary"
+                                                    onClick={()=>{ 
+                                                        setDialog(false)   
+                                                    }}
+                                                >
+                                                    confirm
+                                                </button>
+                                                
+                                            </div>
+                                </Link>
+                                
+                                
+                            </form>
+                    </div>
+            </Modal>
+          </div>
+        )
 }
 
 
-function FoarmHandler( {setConfirmEditSwitcher}) {
+function FoarmHandler( {setConfirmEditSwitcher ,setDialog, setWarningDialog }) {
 
   // used to open routes
   let history = useHistory()
@@ -128,7 +199,7 @@ function FoarmHandler( {setConfirmEditSwitcher}) {
     if(name==="itemName"){
       // if it is item name switcher the code will enter here 
       // it is a switcher so we need this kind of a method to read the value 
-      const values = [...inputFiled];      
+      const values = [...inputFiled];
       values [key][name] = event.value;
       setInputField(values)
       // the value is read and set using setInputField
@@ -188,6 +259,8 @@ function FoarmHandler( {setConfirmEditSwitcher}) {
               {
                 inputFiled.map( (inputField , index)=>(
                     // here we loop through the inputField and take inputs
+                    // depends upon the length of the inputField
+                    // When we append a new fild to inputFiled array a field will be also displayed in ui
                     <div  style={{ background : "gray" , padding:20 , marginTop:20 , marginBottom:10 }} >
                       <Test inputField ={inputField} />
                       <div>
@@ -229,9 +302,49 @@ function FoarmHandler( {setConfirmEditSwitcher}) {
           </div>
 
           <button onClick={ ()=>{ 
+                                  // when adding a new field we want to check
+                                  // is there any empty field
+                                  // if there is an empty field we dont add a new filed . 
+                                  
+                                    var last_index = inputFiled.length-1;
+                                    // last_index holds the index of the last added product 
+                                    var last_field = inputFiled[ last_index ] ;
+                                    // last field is uesed to store the values of the last filed 
+                                    // , like name , quantity , etc..
+                                    
+                                    if(last_field.itemName==="")
+                                    {
+                                      setWarningDialog("please enter item  name ");
+                                      setDialog(true);  
+                                      // here we check if the name filed is empty 
+                                      // if name field is null we dont have to add new product 
+                                      // so we provide a dialog saying enter the product name 
+                                      console.log("please enter item  name ");
+                                    }
+                                    else if ( last_field.itemQuantity==="" )
+                                    {
+                                      setWarningDialog("please enter item  quantity ");
+                                      setDialog(true); 
+                                      // here we check if the itemQuantity filed is empty 
+                                      // if itemQuantity field is null we dont have to add new product 
+                                      // so we provide a dialog saying enter the product itemQuantity 
+                                      console.log("please enter item  quantity ");
+                                    }
+                                    else
+                                    {
+                                      setDialog(false);  
+                                      setWarningDialog("");
+                                      // the code enters this loop if the user has entered all the necessary filed 
+                                      // if yes we add a new field .
+                                      setInputField([...inputFiled , {itemName:'' , itemQuantity:'' , showOther:false }]) 
+                                    }
+
                                   // used to add new product component .
                                   // it attaches an empty object to the array 
-                                  setInputField([...inputFiled , {itemName:'' , itemQuantity:'' , showOther:false }]) 
+                                  
+                                  // setInputField([...inputFiled , {itemName:'' , itemQuantity:'' , showOther:false }]) 
+
+
                                 }}>Add New Product</button>
           <button onClick={()=>{
                                   console.log(" final :  " , inputFiled )

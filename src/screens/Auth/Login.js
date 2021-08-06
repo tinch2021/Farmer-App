@@ -11,7 +11,8 @@ import { useHistory } from 'react-router-dom'
 
 
 import { authenticate_save_jwt, isAuthenticated } from './AuthenticationHandler'
-
+import "./loginpage1.css"
+import Login1 from "./Images/login_image1.png"
 function App() {
 
 
@@ -134,13 +135,12 @@ function App() {
   return (
     <div className="App">
 
-      {/* header section */}
-      
-       <span>
+
+       {/* <span>
             <h1>
                 Login
             </h1>
-       </span>
+       </span> */}
       
       {/* header section */}
 
@@ -149,10 +149,20 @@ function App() {
           // if confirmationResult equal to zero 
           // then the enter phone number screen is displayed
           values.confirmationResult.length === 0 &&
+          <div className="login_main row">
+          <div className="login_backg col-md-6">
+          <img className="login_image1 d-flex" src={Login1} alt="" />
+          </div>
+          <div className="login_container d-flex col-md-6 justify-content-center">
+          {/* header section */}
+          <div className="login_small_container">
+            <span>
+            <h1>
+                Login
+            </h1>
+       </span> 
           <div>
             <div>
-              enter phone
-              :
                <input type="text" name="mobile"
                                               placeholder="Mobile Number"
                                               onChange={handleChange('mobile')}
@@ -170,7 +180,7 @@ function App() {
                                   <button onClick={() => {
                                                               getOtp()
                                                           }}
-                                                      >get Otp</button>
+                                                      >Get OTP</button>
                               </>
                               :
                               <>
@@ -178,18 +188,34 @@ function App() {
                           }        
               </div>
           </div>
-        }
+          </div>
       </div>
+      </div>
+        }
+      
+      </div>
+
+
+      {/* fffffffffffffffffffffffffffffff */}
 
       <div>
         {
           // if confirmationResult not equal to zero then the otp is sent
           // then the enter otp section is displayed    
           values.confirmationResult.length !== 0 &&
-          <div>
+          <div className="login_main row">
+          <div className="login_backg col-md-6">
+          <img src={Login1} alt="" className="login_image1 d-flex" />
+          </div>
+          <div className="login_container d-flex justify-content-center col-md-6">
+          <div className="login_small_container">
+          <span>
+            <h1>
+                Login
+            </h1>
+       </span>
               <div>
-                enter otp
-                :
+                
                 <input id="otp" type="text"
                        name="otp" placeholder="OTP"
                        onChange={handleChange('otp')}
@@ -218,16 +244,19 @@ function App() {
                     Retry
               </button>
 
-
+              </div>
+      </div>
 
           </div>
           
         }
       </div>
+      </div>
 
-    </div>
+      
+
     
-    
+ 
   );
   
   

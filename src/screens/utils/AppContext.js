@@ -276,13 +276,11 @@ export const AppContextProvider = ( {children} )=>{
             if(res.status === 202)
             {
                 console.log("res : " , res.data)
-                // setUserValues({
-                //                 ...userValues,
-                //                 user_address: [address],
-                //             })
-
-                // set the GotUserDetailsFlag to true
-                   
+               
+                setProductHolder([])
+                // above line will set the roduct holder array to null,
+                // because we already send the data to cloud 
+                
             }
         }).catch(err=>{
             // enters here if query catches any error
